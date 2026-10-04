@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kelas</title>
+<meta name="theme-color" content="#E8ECF1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F141E" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kelas">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #E8ECF1;
+  --surface: #FFFFFF;
+  --ink: #141C2E;
+  --muted: #5A6377;
+  --line: #CDD4DE;
+  --accent: #2346D6;
+  --accent-ink: #FFFFFF;
+  --danger: #B42318;
+  --c0: #2346D6; --c1: #0E8A72; --c2: #C4500F; --c3: #7A3FD0;
+  --c4: #9A7000; --c5: #C93366; --c6: #0F7FA8; --c7: #5E7F12;
+  --tint: 13%;
+  --display: "Bricolage Grotesque", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F141E; --surface: #19202D; --ink: #E6EBF3; --muted: #9AA4B8; --line: #2E3747;
+    --accent: #7D97FF; --accent-ink: #0F141E; --danger: #FF8A80;
+    --c0: #7D97FF; --c1: #3FC9A7; --c2: #FF8F4D; --c3: #B48CFF;
+    --c4: #E3BC3F; --c5: #FF7BA6; --c6: #4FC3EE; --c7: #A6CB4C;
+    --tint: 20%;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F141E; --surface: #19202D; --ink: #E6EBF3; --muted: #9AA4B8; --line: #2E3747;
+  --accent: #7D97FF; --accent-ink: #0F141E; --danger: #FF8A80;
+  --c0: #7D97FF; --c1: #3FC9A7; --c2: #FF8F4D; --c3: #B48CFF;
+  --c4: #E3BC3F; --c5: #FF7BA6; --c6: #4FC3EE; --c7: #A6CB4C;
+  --tint: 20%;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0; min-height: 100%;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 1rem; line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 1.25rem; }
+[hidden] { display: none !important; }
+
+/* Header */
+.top {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  padding: 1.25rem 0 0.75rem;
+}
+.mark { font-family: var(--display); font-weight: 800; font-size: 1.6rem; letter-spacing: -0.03em; margin: 0; }
+.term { color: var(--muted); font-size: 0.95rem; text-align: right; margin: 0; }
+
+/* Tabs */
+.tabs {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); padding: 0.5rem 0 0.75rem;
+}
+.tabs-inner { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+.tab {
+  border: 0; background: transparent; padding: 0.45rem 1.1rem; border-radius: 999px;
+  font-weight: 700; color: var(--muted);
+}
+.tab[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+
+/* Upload screen */
+.intro { padding: 3rem 0 4rem; max-width: 40rem; }
+.intro h1 {
+  font-family: var(--display); font-weight: 800; letter-spacing: -0.035em; line-height: 0.98;
+  font-size: clamp(2.6rem, 9vw, 4.6rem); margin: 0 0 1.5rem;
+}
+.drop {
+  display: block; border: 2px dashed var(--line); border-radius: 18px; background: var(--surface);
+  padding: 2rem 1.5rem; text-align: center; transition: border-color .15s, background .15s;
+}
+.drop.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+.drop p { margin: 0.75rem 0 0; color: var(--muted); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  border: 0; border-radius: 999px; padding: 0.75rem 1.4rem; font-weight: 700;
+  background: var(--accent); color: var(--accent-ink);
+}
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn.danger { background: transparent; color: var(--danger); border: 1px solid currentColor; }
+.btn:disabled { opacity: .6; cursor: progress; }
+.note { color: var(--muted); font-size: 0.95rem; margin: 1.25rem 0 0; max-width: 36rem; }
+.error {
+  margin: 1rem 0 0; padding: 0.9rem 1rem; border-radius: 12px;
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface)); color: var(--ink);
+  border-left: 4px solid var(--danger);
+}
+
+/* Today */
+.hero {
+  --c: var(--accent);
+  position: relative; margin: 0.5rem 0 2.25rem; padding: 0.25rem 0 0.25rem 1.4rem;
+  border-left: 8px solid var(--c);
+}
+.hero-when { margin: 0; font-weight: 700; color: var(--c); font-size: 1.05rem; }
+.hero-room {
+  font-family: var(--display); font-weight: 800; letter-spacing: -0.045em; line-height: 0.9;
+  font-size: clamp(3.2rem, 15vw, 7.5rem); margin: 0.35rem 0 0.4rem; overflow-wrap: anywhere;
+}
+.hero-room span { color: var(--muted); font-weight: 600; font-size: 0.42em; letter-spacing: -0.02em; margin-left: 0.08em; }
+.hero-roomname { margin: 0 0 0.9rem; font-size: 1.2rem; }
+.hero-class { margin: 0; font-size: 1.05rem; }
+.hero-class strong { font-weight: 700; }
+.hero-title { margin: 0.1rem 0 0; color: var(--muted); }
+.hero-then { margin: 1rem 0 0; color: var(--muted); }
+.nowrap { white-space: nowrap; }
+.hero-empty { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 6vw, 2.8rem); letter-spacing: -0.03em; line-height: 1.05; margin: 0.25rem 0 0.5rem; }
+
+.day-head { font-family: var(--display); font-weight: 700; font-size: 1.35rem; letter-spacing: -0.02em; margin: 0 0 0.75rem; }
+.list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.row {
+  --c: var(--accent);
+  display: grid; grid-template-columns: 5.5rem 1fr; gap: 1rem; align-items: start;
+  width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line);
+  padding: 0.9rem 0.25rem;
+}
+.row-time { font-variant-numeric: tabular-nums; font-weight: 700; }
+.row-time small { display: block; color: var(--muted); font-weight: 400; }
+.row-main { border-left: 4px solid var(--c); padding-left: 0.8rem; }
+.row-main b { display: block; }
+.row-main span { color: var(--muted); }
+.row.past { opacity: .5; }
+.row.now .row-time { color: var(--c); }
+.empty { color: var(--muted); padding: 1rem 0; margin: 0; }
+
+/* Week */
+.week-nav { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin: 0 0 1rem; }
+.week-nav h2 { font-family: var(--display); font-weight: 700; font-size: 1.35rem; letter-spacing: -0.02em; margin: 0 .5rem; min-width: 11ch; }
+.icon-btn { width: 2.5rem; height: 2.5rem; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 1.2rem; line-height: 1; }
+.grid-scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+.grid { display: grid; min-width: 640px; position: relative; }
+.gh { padding: .6rem .5rem; border-bottom: 1px solid var(--line); font-weight: 700; font-size: .95rem; }
+.gh small { display: block; color: var(--muted); font-weight: 400; }
+.gh.today { color: var(--accent); }
+.times { position: relative; border-right: 1px solid var(--line); }
+.times span { position: absolute; right: .4rem; transform: translateY(-50%); font-size: .75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.col { position: relative; border-right: 1px solid var(--line); }
+.col:last-child { border-right: 0; }
+.col.today { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.hline { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); opacity: .6; }
+.block {
+  --c: var(--accent);
+  position: absolute; border: 0; text-align: left; overflow: hidden;
+  background: color-mix(in srgb, var(--c) var(--tint), var(--surface));
+  border-left: 4px solid var(--c); border-radius: 6px;
+  padding: .35rem .45rem; font-size: .8rem; line-height: 1.25;
+}
+.block b { display: block; font-size: .85rem; }
+.block .room { font-weight: 700; color: var(--c); }
+.nowline { position: absolute; left: 0; right: 0; height: 2px; background: var(--danger); z-index: 2; }
+.nowline::before { content: ""; position: absolute; left: -4px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--danger); }
+.week-empty { padding: 2rem 1rem; text-align: center; color: var(--muted); }
+
+/* Courses */
+.course { --c: var(--accent); padding: 1.1rem 0 1.1rem 1rem; border-left: 6px solid var(--c); margin-bottom: 1.25rem; background: var(--surface); border-radius: 0 14px 14px 0; padding-right: 1rem; }
+.course h3 { font-family: var(--display); font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; margin: 0; }
+.course h3 span { color: var(--muted); font-weight: 600; margin-right: .4rem; }
+.course .meta { color: var(--muted); margin: .15rem 0 .6rem; font-size: .95rem; }
+.course table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+.course td { padding: .35rem .75rem .35rem 0; vertical-align: top; border-top: 1px solid var(--line); }
+.course td:first-child { font-weight: 700; white-space: nowrap; }
+.tbl { overflow-x: auto; }
+.device { border-top: 1px solid var(--line); margin-top: 2rem; padding-top: 1.25rem; }
+.device h2 { font-family: var(--display); font-size: 1.2rem; margin: 0 0 .25rem; }
+.actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; }
+
+main { padding-bottom: 4rem; }
+.foot-note { color: var(--muted); font-size: .9rem; margin: 1rem 0 0; }
+
+/* Dialog */
+dialog {
+  border: 0; border-radius: 18px; padding: 1.5rem; max-width: min(28rem, calc(100vw - 2rem)); width: 100%;
+  background: var(--surface); color: var(--ink); box-shadow: inset 0 8px 0 var(--c, var(--accent)); padding-top: 2rem;
+}
+dialog::backdrop { background: rgb(10 14 24 / .45); }
+dialog h3 { font-family: var(--display); font-size: 1.5rem; letter-spacing: -0.02em; margin: 0 0 .2rem; }
+dialog .sub { color: var(--muted); margin: 0 0 1rem; }
+dialog dl { display: grid; grid-template-columns: auto 1fr; gap: .4rem 1rem; margin: 0 0 1.25rem; }
+dialog dt { color: var(--muted); }
+dialog dd { margin: 0; font-weight: 700; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); padding: .7rem 1.1rem; border-radius: 999px; font-weight: 700;
+  z-index: 20; max-width: calc(100vw - 2rem);
+}
+
+@media (max-width: 560px) {
+  .week-nav h2 { order: -1; flex-basis: 100%; margin: 0 0 .25rem; }
+  .week-nav .btn { padding: .5rem 1rem; }
+  .wrap { padding: 0 1rem; }
+  .row { grid-template-columns: 4.6rem 1fr; gap: .75rem; }
+  .term { font-size: .85rem; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="mark">Kelas</p>
+    <p class="term" id="term"></p>
+  </header>
+
+  <!-- Upload -->
+  <section id="screen-upload" class="intro" hidden>
+    <h1>Upload your schedule once. Check it any time.</h1>
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept="application/pdf,.pdf" hidden>
+      <span class="btn" id="choose">Choose schedule PDF</span>
+      <p id="drop-hint">or drop the PDF here</p>
+    </label>
+    <div class="error" id="error" role="alert" hidden></div>
+    <p class="note">Use the class list version of <b>View My Classes/Schedule</b> from CLiC, the one that lists each course with its start and end dates. The weekly calendar and by-date versions only cover one week.</p>
+    <p class="note">The PDF is read on this device and isn't uploaded anywhere. Only your timetable is saved, in this browser.</p>
+  </section>
+
+  <!-- App -->
+  <div id="screen-app" hidden>
+    <nav class="tabs" aria-label="Views">
+      <div class="tabs-inner" role="tablist">
+        <button class="tab" role="tab" data-view="today" aria-selected="true">Today</button>
+        <button class="tab" role="tab" data-view="week" aria-selected="false">Week</button>
+        <button class="tab" role="tab" data-view="courses" aria-selected="false">Courses</button>
+      </div>
+    </nav>
+    <main>
+      <section id="view-today"></section>
+      <section id="view-week" hidden>
+        <div class="week-nav">
+          <button class="icon-btn" id="prev" aria-label="Previous week">‹</button>
+          <button class="icon-btn" id="next" aria-label="Next week">›</button>
+          <h2 id="week-label"></h2>
+          <button class="btn ghost" id="this-week">This week</button>
+        </div>
+        <div class="grid-scroll"><div class="grid" id="grid"></div></div>
+        <p class="foot-note">Public holidays and trimester breaks aren't in the PDF. Check MMU announcements for cancelled classes.</p>
+      </section>
+      <section id="view-courses" hidden></section>
+    </main>
+  </div>
+</div>
+
+<dialog id="detail">
+  <h3 id="d-title"></h3>
+  <p class="sub" id="d-sub"></p>
+  <dl id="d-list"></dl>
+  <form method="dialog"><button class="btn">Close</button></form>
+</dialog>
+
+<input type="file" id="file-replace" accept="application/pdf,.pdf" hidden>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script type="module">
+// ---- Parser: text from the "class list" PDF -> structured timetable ----
+const DAY_INDEX = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6, sun: 0,
+  mo: 1, tu: 2, we: 3, th: 4, fr: 5, sa: 6, su: 0 };
+const COMPONENT_NAMES = { LEC: "Lecture", TUT: "Tutorial", LAB: "Lab", PRA: "Practical", SEM: "Seminar" };
+
+const NOISE = [
+  /^Print$/i,
+  /^Status\s+Units/i,
+  /^Class\s+Start\/End/i,
+  /^View My Classes/i,
+  /^\d+\s+of\s+\d+\b/,
+  /^https?:\/\//i,
+];
+
+function toMinutes(t) {
+  const m = t.replace(/\s+/g, "").match(/^(\d{1,2}):(\d{2})(AM|PM)$/i);
+  if (!m) return null;
+  let h = Number(m[1]) % 12;
+  if (m[3].toUpperCase() === "PM") h += 12;
+  return h * 60 + Number(m[2]);
+}
+
+function toISODate(dmy) {
+  const [d, m, y] = dmy.split("/");
+  return `${y}-${m}-${d}`;
+}
+
+function parseDays(s) {
+  const out = [];
+  for (const word of s.split(/[\s,]+/)) {
+    const key = word.slice(0, 3).toLowerCase();
+    const idx = DAY_INDEX[key] ?? DAY_INDEX[word.slice(0, 2).toLowerCase()];
+    if (idx !== undefined && !out.includes(idx)) out.push(idx);
+  }
+  return out;
+}
+
+function splitRoom(raw) {
+  const text = raw.replace(/\s+/g, " ").trim();
+  const m = text.match(/^([A-Z]{2,}\d{2,}[A-Z0-9]*(?:-[A-Z0-9]+)?)\s*(.*)$/);
+  if (m) return { room: m[1], roomName: m[2] };
+  return { room: text || "TBA", roomName: "" };
+}
+
+function detectType(text) {
+  if (/Class\s+Start\/End\s+Dates/i.test(text) || /Component\s+\w+\s+-\s+Class Sect/i.test(text)) return "list";
+  if (/Week of \d{2}\/\d{2}\/\d{4}/i.test(text)) return "week";
+  if (/From \d{2}\/\d{2}\/\d{4} To \d{2}\/\d{2}\/\d{4}/i.test(text)) return "bydate";
+  return "unknown";
+}
+
+function parseSchedule(text) {
+  const type = detectType(text);
+  if (type !== "list") {
+    const err = new Error(type);
+    err.code = type;
+    throw err;
+  }
+
+  const lines = text.split("\n").map((l) => l.replace(/\s+/g, " ").trim()).filter(Boolean)
+    .filter((l) => !NOISE.some((re) => re.test(l)));
+
+  const meta = { student: "", trimester: "", level: "" };
+  const trimIdx = lines.findIndex((l) => /^Trimester\s/i.test(l));
+  if (trimIdx >= 0) {
+    meta.trimester = lines[trimIdx].replace(/^Trimester\s+/i, "");
+    if (trimIdx > 0) meta.student = lines[trimIdx - 1];
+    if (lines[trimIdx + 1] && !/\d{4}/.test(lines[trimIdx + 1])) meta.level = lines[trimIdx + 1];
+  }
+
+  // Find course headers: "<prefix> CODE1234 TITLE" followed shortly by a status line.
+  const HEADER = /^(?:[A-Z]{1,3}\s+)?([A-Z]{2,4}\d{4}[A-Z]?)\s+(.+)$/;
+  const STATUS = /^(Enrolled|Dropped|Wait(?:ing|list(?:ed)?)?)\b/i;
+  const headers = [];
+  lines.forEach((l, i) => {
+    const m = l.match(HEADER);
+    if (m && !/^(Component|Days|Times)/.test(l) && lines.slice(i + 1, i + 3).some((n) => STATUS.test(n))) {
+      headers.push({ i, code: m[1], title: m[2].trim() });
+    }
+  });
+  if (!headers.length) {
+    const err = new Error("nocourses");
+    err.code = "nocourses";
+    throw err;
+  }
+
+  const courses = [];
+  const classes = [];
+  headers.forEach((h, n) => {
+    const chunkLines = lines.slice(h.i + 1, n + 1 < headers.length ? headers[n + 1].i : lines.length);
+    const statusLine = chunkLines.find((l) => STATUS.test(l)) || "";
+    const status = (statusLine.match(STATUS) || ["", "Enrolled"])[1];
+    if (/^Dropped/i.test(status)) return;
+    const units = Number((statusLine.match(/\b(\d+\.\d{2})\b/) || [])[1]) || null;
+
+    const components = [];
+    for (const l of chunkLines) {
+      const m = l.match(/^Component\s+(\w+)\s*-\s*Class Sect\s+(\S+)\s*-\s*Class Nbr\s+(\d+)/i);
+      if (m) components.push({ type: m[1].toUpperCase(), section: m[2], classNbr: m[3] });
+    }
+
+    const body = chunkLines.filter((l) => !STATUS.test(l) && !/^Component\s/i.test(l)).join(" ");
+    const MEET = /(\d{2}\/\d{2}\/\d{4})\s*-\s*(\d{2}\/\d{2}\/\d{4})\s*Days:\s*(.+?)\s*Times:\s*(\d{1,2}:\d{2}\s*[AP]M)\s*to\s*(\d{1,2}:\d{2}\s*[AP]M)\s*(.*?)(?=\d{2}\/\d{2}\/\d{4}\s*-|$)/gi;
+    const meetings = [...body.matchAll(MEET)];
+
+    meetings.forEach((m, k) => {
+      const comp = components.length
+        ? components[meetings.length === components.length ? k : Math.min(k, components.length - 1)]
+        : { type: "", section: "", classNbr: "" };
+      const start = toMinutes(m[4]);
+      const end = toMinutes(m[5]);
+      if (start === null || end === null) return;
+      const { room, roomName } = splitRoom(m[6]);
+      for (const day of parseDays(m[3])) {
+        classes.push({
+          code: h.code,
+          type: comp.type,
+          kind: COMPONENT_NAMES[comp.type] || comp.type || "Class",
+          section: comp.section,
+          classNbr: comp.classNbr,
+          day, start, end,
+          startDate: toISODate(m[1]),
+          endDate: toISODate(m[2]),
+          room, roomName,
+        });
+      }
+    });
+
+    courses.push({ code: h.code, title: h.title, units, status, components });
+  });
+
+  if (!classes.length) {
+    const err = new Error("noclasses");
+    err.code = "noclasses";
+    throw err;
+  }
+
+  courses.forEach((c, i) => (c.color = i % 8));
+  return { version: 1, ...meta, importedAt: new Date().toISOString(), courses, classes };
+}
+
+
+
+// ---- PDF text extraction (pdf.js, loaded only when needed) ----
+const PDFJS_BASE = "https://cdn.jsdelivr.net/npm/pdfjs-dist@5.6.205/legacy/build/";
+let pdfjsPromise = null;
+function loadPdfjs() {
+  if (!pdfjsPromise) {
+    pdfjsPromise = (async () => {
+      // Importing the worker module first lets pdf.js run on the main thread,
+      // which avoids cross-origin Worker restrictions.
+      await import(PDFJS_BASE + "pdf.worker.min.mjs");
+      const lib = await import(PDFJS_BASE + "pdf.min.mjs");
+      lib.GlobalWorkerOptions.workerSrc = PDFJS_BASE + "pdf.worker.min.mjs";
+      return lib;
+    })().catch((e) => { pdfjsPromise = null; throw e; });
+  }
+  return pdfjsPromise;
+}
+
+async function extractText(file) {
+  const lib = await loadPdfjs();
+  const data = new Uint8Array(await file.arrayBuffer());
+  const pdf = await lib.getDocument({ data, isEvalSupported: false }).promise;
+  let text = "";
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    for (const item of content.items) text += (item.str || "") + (item.hasEOL ? "\n" : "");
+    text += "\n";
+  }
+  return text;
+}
+
+// ---- Storage ----
+const KEY = "kelas.timetable.v1";
+function loadData() {
+  try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; } catch { return null; }
+}
+function saveData(d) {
+  try { localStorage.setItem(KEY, JSON.stringify(d)); return true; } catch { return false; }
+}
+function clearData() { try { localStorage.removeItem(KEY); } catch {} }
+
+// ---- Helpers ----
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS_LONG = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function fmtTime(min) {
+  const h = Math.floor(min / 60), m = min % 60;
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`;
+}
+function fmtHour(h) { const h12 = h % 12 === 0 ? 12 : h % 12; return `${h12} ${h < 12 ? "AM" : "PM"}`; }
+function iso(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
+function fromISO(s) { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); }
+function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function mondayOf(d) { const x = startOfDay(d); const wd = (x.getDay() + 6) % 7; return addDays(x, -wd); }
+function fmtDayLong(d) { return `${DAY_NAMES[d.getDay()]} ${d.getDate()} ${MONTHS_LONG[d.getMonth()]}`; }
+function fmtShort(d) { return `${d.getDate()} ${MONTHS[d.getMonth()]}`; }
+function fmtDMY(s) { const d = fromISO(s); return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`; }
+function nowMinutes(d) { return d.getHours() * 60 + d.getMinutes(); }
+function niceTitle(t) {
+  if (!/\s/.test(t) && t.length <= 6) return t;
+  const small = new Set(["for", "and", "of", "the", "to", "in", "on", "with", "a", "an"]);
+  return t.toLowerCase().split(" ").map((w, i) => (i > 0 && small.has(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+function duration(mins) {
+  if (mins < 60) return `${mins} min`;
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return m ? `${h} h ${m} min` : `${h} h`;
+}
+
+// ---- State ----
+let data = loadData();
+let view = "today";
+let weekStart = null;
+
+function course(code) { return data.courses.find((c) => c.code === code) || { code, title: "", color: 0 }; }
+function colorVar(code) { return `var(--c${course(code).color})`; }
+function classesOn(date) {
+  const day = date.getDay(), s = iso(date);
+  return data.classes.filter((c) => c.day === day && s >= c.startDate && s <= c.endDate).sort((a, b) => a.start - b.start);
+}
+function termRange() {
+  const starts = data.classes.map((c) => c.startDate).sort();
+  const ends = data.classes.map((c) => c.endDate).sort();
+  return { start: fromISO(starts[0]), end: fromISO(ends[ends.length - 1]) };
+}
+function teachingWeek(date) {
+  const { start, end } = termRange();
+  if (date < mondayOf(start) || startOfDay(date) > end) return null;
+  return Math.floor((mondayOf(date) - mondayOf(start)) / (7 * 864e5)) + 1;
+}
+
+// ---- Rendering ----
+function render() {
+  const hasData = !!(data && data.classes && data.classes.length);
+  $("screen-upload").hidden = hasData;
+  $("screen-app").hidden = !hasData;
+  if (!hasData) { $("term").textContent = ""; return; }
+
+  const wk = teachingWeek(new Date());
+  $("term").textContent = (data.trimester ? `Trimester ${data.trimester}` : "") + (wk ? `, week ${wk}` : "");
+
+  document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.view === view)));
+  $("view-today").hidden = view !== "today";
+  $("view-week").hidden = view !== "week";
+  $("view-courses").hidden = view !== "courses";
+  if (view === "today") renderToday();
+  if (view === "week") renderWeek();
+  if (view === "courses") renderCourses();
+}
+
+function findUpcoming(now) {
+  const { end } = termRange();
+  const today = startOfDay(now), nm = nowMinutes(now);
+  let current = null;
+  for (let d = 0; d < 400; d++) {
+    const date = addDays(today, d);
+    if (date > end) break;
+    let list = classesOn(date);
+    if (d === 0) {
+      current = list.find((c) => c.start <= nm && nm < c.end) || null;
+      list = list.filter((c) => c.start > nm);
+    }
+    if (list.length) return { current, next: list[0], nextDate: date, offset: d };
+  }
+  return { current, next: null };
+}
+
+function roomHTML(room) {
+  const m = room.match(/^(.*?)(-[A-Z0-9]+)$/);
+  return m ? `${esc(m[1])}<span>${esc(m[2])}</span>` : esc(room);
+}
+
+function renderToday() {
+  const now = new Date();
+  const nm = nowMinutes(now);
+  const { current, next, nextDate, offset } = findUpcoming(now);
+  const { start } = termRange();
+  let hero = "";
+
+  const heroFor = (c, when, extra = "") => {
+    const co = course(c.code);
+    return `<section class="hero" style="--c:${colorVar(c.code)}">
+      <p class="hero-when">${when}</p>
+      <h2 class="hero-room">${roomHTML(c.room)}</h2>
+      ${c.roomName ? `<p class="hero-roomname">${esc(c.roomName)}</p>` : ""}
+      <p class="hero-class"><strong>${esc(c.code)} ${esc(c.kind)}</strong>, ${fmtTime(c.start)} to ${fmtTime(c.end)}</p>
+      <p class="hero-title">${esc(niceTitle(co.title))}</p>
+      ${extra}
+    </section>`;
+  };
+
+  if (current) {
+    const then = next && offset === 0
+      ? `<p class="hero-then">Then ${esc(next.code)} ${esc(next.kind)} at ${fmtTime(next.start)} in <span class="nowrap">${esc(next.room)}</span></p>` : "";
+    hero = heroFor(current, `Happening now, ends in ${duration(current.end - nm)}`, then);
+  } else if (next) {
+    let when;
+    if (offset === 0) when = `Next class, in ${duration(next.start - nm)}`;
+    else if (offset === 1) when = `Next class, tomorrow at ${fmtTime(next.start)}`;
+    else if (nextDate <= addDays(startOfDay(start), 0) && startOfDay(now) < startOfDay(start))
+      when = `Classes start ${fmtDayLong(nextDate)}, ${offset} days from now`;
+    else when = `Next class, ${fmtDayLong(nextDate)} at ${fmtTime(next.start)}`;
+    hero = heroFor(next, when);
+  } else {
+    hero = `<section class="hero"><p class="hero-empty">No more classes this trimester.</p>
+      <p class="hero-title">Upload next trimester's schedule from the Courses tab when it's out.</p></section>`;
+  }
+
+  const todays = classesOn(now);
+  const rows = todays.map((c) => {
+    const state = c.end <= nm ? "past" : (c.start <= nm ? "now" : "");
+    return `<li><button class="row ${state}" style="--c:${colorVar(c.code)}" data-key="${esc(keyOf(c))}">
+      <span class="row-time">${fmtTime(c.start)}<small>${fmtTime(c.end)}</small></span>
+      <span class="row-main"><b>${esc(c.code)} ${esc(c.kind)}</b><span>${esc(c.room)}${c.roomName ? ", " + esc(c.roomName) : ""}</span></span>
+    </button></li>`;
+  }).join("");
+
+  $("view-today").innerHTML = hero +
+    `<h2 class="day-head">Today, ${fmtDayLong(now)}</h2>` +
+    (rows ? `<ul class="list">${rows}</ul>` : `<p class="empty">No classes today.</p>`);
+}
+
+function keyOf(c) { return `${c.code}|${c.type}|${c.day}|${c.start}`; }
+
+function renderWeek() {
+  const now = new Date();
+  const { start, end } = termRange();
+  if (!weekStart) {
+    const today = startOfDay(now);
+    weekStart = today < start ? mondayOf(start) : today > end ? mondayOf(end) : mondayOf(today);
+  }
+  const days = [1, 2, 3, 4, 5];
+  if (data.classes.some((c) => c.day === 6)) days.push(6);
+  if (data.classes.some((c) => c.day === 0)) days.push(0);
+  const dates = days.map((d) => addDays(weekStart, (d + 6) % 7));
+
+  const minH = Math.floor(Math.min(...data.classes.map((c) => c.start)) / 60);
+  const maxH = Math.ceil(Math.max(...data.classes.map((c) => c.end)) / 60);
+  const HOUR = 60; // px per hour
+  const height = (maxH - minH) * HOUR;
+  const y = (min) => (min - minH * 60) / 60 * HOUR;
+
+  const last = dates[dates.length - 1];
+  const wk = teachingWeek(weekStart);
+  $("week-label").textContent = `${fmtShort(dates[0])} to ${fmtShort(last)}` + (wk ? `, week ${wk}` : "");
+
+  const grid = $("grid");
+  grid.style.gridTemplateColumns = `3.5rem repeat(${days.length}, minmax(100px, 1fr))`;
+  const todayISO = iso(now);
+  let html = `<div class="gh"></div>` + dates.map((d) =>
+    `<div class="gh ${iso(d) === todayISO ? "today" : ""}">${DAY_NAMES[d.getDay()].slice(0, 3)}<small>${fmtShort(d)}</small></div>`).join("");
+
+  html += `<div class="times" style="height:${height}px">` +
+    Array.from({ length: maxH - minH - 1 }, (_, i) => `<span style="top:${(i + 1) * HOUR}px">${fmtHour(minH + i + 1)}</span>`).join("") + `</div>`;
+
+  let total = 0;
+  for (const d of dates) {
+    const list = classesOn(d);
+    total += list.length;
+    // lay out overlapping classes side by side
+    const lanes = [], placed = [];
+    let cluster = [], clusterEnd = -1;
+    const flush = () => { const n = Math.max(1, ...cluster.map((p) => p.lane + 1)); cluster.forEach((p) => (p.lanes = n)); cluster = []; };
+    for (const c of list) {
+      if (c.start >= clusterEnd && cluster.length) { flush(); lanes.length = 0; }
+      let lane = lanes.findIndex((e) => e <= c.start);
+      if (lane === -1) { lane = lanes.length; lanes.push(c.end); } else lanes[lane] = c.end;
+      const p = { c, lane };
+      cluster.push(p); placed.push(p);
+      clusterEnd = Math.max(clusterEnd, c.end);
+    }
+    if (cluster.length) flush();
+
+    const isToday = iso(d) === todayISO;
+    html += `<div class="col ${isToday ? "today" : ""}" style="height:${height}px">` +
+      Array.from({ length: maxH - minH - 1 }, (_, i) => `<div class="hline" style="top:${(i + 1) * HOUR}px"></div>`).join("") +
+      placed.map(({ c, lane, lanes: n }) => {
+        const w = 100 / n;
+        return `<button class="block" data-key="${esc(keyOf(c))}" style="--c:${colorVar(c.code)};top:${y(c.start) + 2}px;height:${y(c.end) - y(c.start) - 4}px;left:calc(${lane * w}% + 3px);width:calc(${w}% - 6px)">
+          <b>${esc(c.code)}</b>${esc(c.kind)}<br><span class="room">${esc(c.room)}</span><br>${fmtTime(c.start)}</button>`;
+      }).join("") +
+      (isToday && nowMinutes(now) > minH * 60 && nowMinutes(now) < maxH * 60 ? `<div class="nowline" style="top:${y(nowMinutes(now))}px"></div>` : "") +
+      `</div>`;
+  }
+  if (!total) {
+    const msg = weekStart < mondayOf(start) ? "Classes haven't started yet this week."
+      : weekStart > end ? "The trimester has ended." : "No classes this week.";
+    html += `<div class="week-empty" style="grid-column:1 / -1">${msg}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function renderCourses() {
+  const units = data.courses.reduce((s, c) => s + (c.units || 0), 0);
+  const items = data.courses.map((co) => {
+    const rows = data.classes.filter((c) => c.code === co.code).map((c) =>
+      `<tr><td>${esc(c.kind)}</td><td>${DAY_NAMES[c.day]}, ${fmtTime(c.start)} to ${fmtTime(c.end)}</td><td>${esc(c.room)}${c.roomName ? "<br>" + esc(c.roomName) : ""}</td><td>${esc(c.section)}</td></tr>`).join("");
+    return `<article class="course" style="--c:var(--c${co.color})">
+      <h3><span>${esc(co.code)}</span>${esc(niceTitle(co.title))}</h3>
+      <p class="meta">${co.units ? `${co.units} credit hours` : ""}</p>
+      <div class="tbl"><table>${rows}</table></div>
+    </article>`;
+  }).join("");
+  const { start, end } = termRange();
+  const imported = data.importedAt ? new Date(data.importedAt) : null;
+  $("view-courses").innerHTML = items +
+    `<p class="foot-note">${data.courses.length} courses, ${units} credit hours. Classes run from ${fmtDMY(iso(start))} to ${fmtDMY(iso(end))}.</p>
+    <section class="device">
+      <h2>Saved on this device</h2>
+      <p class="foot-note">${data.student ? esc(data.student) + ". " : ""}${imported ? `Uploaded ${fmtDMY(iso(imported))}.` : ""} Saved in this browser only. If you installed Kelas on your home screen, upload inside the installed app.</p>
+      <div class="actions">
+        <button class="btn ghost" id="replace">Replace with a new PDF</button>
+        <button class="btn danger" id="remove">Remove timetable</button>
+      </div>
+    </section>`;
+  $("replace").onclick = () => $("file-replace").click();
+  $("remove").onclick = () => {
+    if (confirm("Remove your timetable from this browser?")) { clearData(); data = null; weekStart = null; view = "today"; render(); }
+  };
+}
+
+// ---- Detail dialog ----
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-key]");
+  if (!el) return;
+  const c = data.classes.find((x) => keyOf(x) === el.dataset.key);
+  if (!c) return;
+  const co = course(c.code);
+  const dlg = $("detail");
+  dlg.style.setProperty("--c", colorVar(c.code));
+  $("d-title").textContent = `${c.code} ${c.kind}`;
+  $("d-sub").textContent = niceTitle(co.title);
+  const rows = [
+    ["When", `${DAY_NAMES[c.day]}, ${fmtTime(c.start)} to ${fmtTime(c.end)}`],
+    ["Room", c.room + (c.roomName ? `, ${c.roomName}` : "")],
+    ["Section", c.section],
+    ["Class no.", c.classNbr],
+    ["Runs", `${fmtDMY(c.startDate)} to ${fmtDMY(c.endDate)}`],
+  ].filter(([, v]) => v);
+  $("d-list").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("");
+  dlg.showModal();
+});
+
+// ---- Upload handling ----
+const MESSAGES = {
+  week: "This is the weekly calendar version, which only shows one week. Download the class list version of View My Classes/Schedule (it lists each course with start and end dates) and upload that.",
+  bydate: "This is the by-date version, which only shows one week. Download the class list version of View My Classes/Schedule (it lists each course with start and end dates) and upload that.",
+  unknown: "This PDF doesn't look like an MMU class schedule. Upload the class list version of View My Classes/Schedule from CLiC.",
+  nocourses: "No courses were found in this PDF. Check that it's the class list version of View My Classes/Schedule.",
+  noclasses: "Courses were found, but no class times. Check that your classes have days and times assigned in CLiC.",
+  read: "This file couldn't be read. Check that it's a PDF and try again.",
+  load: "The PDF reader couldn't load. Check your internet connection and try again.",
+  storage: "Your timetable couldn't be saved in this browser. Private browsing can block saving.",
+};
+
+function showError(code) {
+  const el = $("error");
+  if (!code) { el.hidden = true; return; }
+  el.textContent = MESSAGES[code] || MESSAGES.unknown;
+  el.hidden = false;
+}
+
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => (t.hidden = true), 3500);
+}
+
+async function handleFile(file) {
+  if (!file) return;
+  showError(null);
+  const btn = $("choose");
+  const original = btn.textContent;
+  btn.textContent = "Reading PDF…";
+  try {
+    let text;
+    try { await loadPdfjs(); } catch { throw Object.assign(new Error(), { code: "load" }); }
+    try { text = await extractText(file); } catch { throw Object.assign(new Error(), { code: "read" }); }
+    const parsed = parseSchedule(text);
+    if (!saveData(parsed)) throw Object.assign(new Error(), { code: "storage" });
+    data = parsed; weekStart = null; view = "today";
+    render();
+    toast(`Saved ${parsed.courses.length} courses, ${parsed.classes.length} weekly classes`);
+  } catch (e) {
+    if (!data) { showError(e.code || "unknown"); }
+    else { toast(MESSAGES[e.code] || MESSAGES.unknown); }
+  } finally {
+    btn.textContent = original;
+    $("file").value = ""; $("file-replace").value = "";
+  }
+}
+
+$("file").addEventListener("change", (e) => handleFile(e.target.files[0]));
+$("file-replace").addEventListener("change", (e) => handleFile(e.target.files[0]));
+const drop = $("drop");
+["dragenter", "dragover"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", (e) => handleFile(e.dataTransfer.files[0]));
+
+// ---- Navigation ----
+document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => { view = t.dataset.view; render(); }));
+$("prev").onclick = () => { weekStart = addDays(weekStart, -7); renderWeek(); };
+$("next").onclick = () => { weekStart = addDays(weekStart, 7); renderWeek(); };
+$("this-week").onclick = () => { weekStart = null; renderWeek(); };
+
+// Keep "now" accurate while the page is open.
+setInterval(() => { if (data && view !== "courses") render(); }, 30000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden && data) render(); });
+
+render();
+
+// ---- Offline support (installable app) ----
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+
+</script>
+</body>
+</html>

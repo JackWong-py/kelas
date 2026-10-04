@@ -1,0 +1,16 @@
+{
+  "name": "Kelas: MMU timetable",
+  "short_name": "Kelas",
+  "description": "Upload your MMU class schedule once and check your timetable any time.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E8ECF1",
+  "theme_color": "#E8ECF1",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
